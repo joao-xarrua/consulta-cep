@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta CEP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', Arial, Helvetica, sans-serif;
+        }
+
+        /* Base */
+        .container {
+            width: 960px;
+            margin: 0 auto;
+        }
+
+        /* CEP Invalido */
+
+        .invalido {
+            border: 1px solid #f00 !important;
+        }
+
+        /* CEP Valido */
+
+        .valido {
+            border: 1px solid #0f0 !important;
+        }
+
+        .main-bg {
+            min-height: 100vh;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            z-index: -1;
+        }
+
+        .main {
+            height: 700px;
+            max-height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 10px 10px 2em rgba(0, 0, 0, .2);
+            z-index: 1000;
+            animation: anime 5s;
+        }
+
+        @keyframes anime {
+            0% { 
+                opacity: 0;
+            }
+            100% { 
+                opacity: 1; 
+            }
+        }
+
+        .entrada, .saida {
+            padding: 20px;
+            flex: 1;
+            max-height: 100%;
+            overflow-y: scroll;
+        }
+
+        /* Entrada de dados - lado esquerdo */
+
+        .entrada .formulario {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .campo { 
+            flex: 1;
+        }
+
+        .campo span { 
+            display: block;
+            padding: 10px;
+            min-width: 100%;
+        }
+
+        .campo .cep { 
+            display: inline-block;
+            vertical-align: middle;
+            width: 80%;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1px solid #000000;
+        }
+
+        .campo .cep:hover { 
+            background: #eee;
+        }
+
+        .campo .remover { 
+            display: inline-block;
+            vertical-align: middle;
+            padding: 10px;
+            margin-left: 5px;
+            font-size: 2.25em;
+            line-height: 1rem;
+            background: none;
+            border: none;
+        }
+        
+        .campo .remover:hover { 
+            color: #f00;
+            cursor: pointer;
+        }
+
+        .entrada .formulario .adicionar {
+            display: block;
+            float: left;
+            width: 50%;
+            padding: 5px 30px;
+            margin-top: 30px;
+            line-height: 1em;
+            font-size: 1em;
+            background: #4472C4;
+            color: #fff;
+            border: 1px solid #2F528F;
+            border-radius: 5px;
+        }
+
+        .entrada .formulario .adicionar:hover {
+            cursor: pointer;
+            background: #2F528F;
+        }
+
+        .entrada .formulario .consultar {
+            display: block;
+            float: left;
+            width: 80%;
+            padding: 15px;
+            margin-top: 30px;
+            line-height: 1em;
+            font-size: 1em;
+            background: #70AD47;
+            color: #fff;
+            border: 1px solid #538135;
+            border-radius: 8px;
+        }
+
+        .entrada .formulario .consultar:hover {
+            cursor: pointer;
+            background: #538135;
+        }
+
+        
+        .entrada .formulario .campo {
+            margin-top: 10px;
+            display: block;
+            height: auto;
+        }
+
+        /* Saída de dados - lado direito */
+
+        .saida .resultado {
+            margin-top: 25px;
+            padding: 20px;
+            list-style: none;
+        }
+
+        .saida .resultado span {
+            font-weight: bold;
+        }
+
+        /* Scroll */
+        /* width */
+        ::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 5px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+        }
+
+        /* Responsividade */
+        @media(max-width: 946px) {
+            .container {
+                margin: 20px auto;
+                width: 90%;
+            }
+
+            .main {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+
+            .entrada, .saida {
+                max-height: none;
+                overflow-y: auto;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="main-bg">
+        <div class="main container">
+            <div class="entrada">
+                <h2>Informe os dados para consulta</h2>
+                <form class="formulario" action="#">
+                    <div class="camposDiv">
+                        <div class="campo">
+                            <span>CEP</span>
+                            <input type="text" class="cep" placeholder="00.000-000">
+                        </div>
+                        <!--INSERIR NOVOS INPUTS AQUI-->
+                    </div>
+
+                    <button class="adicionar" id="adicionar">Adicionar CEP</button>
+                    <button class="consultar" id="consultar" type="submit">Consultar</button>
+                </form>
+            </div>
+            <div class="saida">
+                <h2>Resultado da consulta</h2>
+                <div class="retornos">
+                    <!--INSERIR NOVOS RESULTADOS AQUI-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        
+        let ceps_list = document.querySelectorAll('.cep');
+        let remover = document.querySelectorAll('.remover');
+        let campos = document.querySelectorAll('.campo');
+        const consultar_cep = document.querySelector('.consultar');
+        const adicionar = document.querySelector('.adicionar');
+        const retornos = document.querySelector('.retornos');
+        const formulario = document.querySelector('.formulario');
+        const camposDiv = document.querySelector('.camposDiv');
+        
+
+        function pegaTextoElementos([...elementos]) { // desestruturação para transformar em array
+            return elementos.map(element => element.value);
+        }
+
+        const limparCEP = (cep) => {
+            return cep.replace(/\D/g, '');
+        }
+
+        const construirCEP = (cep) => {
+            return cep.replace(/(\d{2})(\d{3})(\d{3})/g, '$1.$2-$3');
+        }
+
+        const formatarCEPs = (ceps) => {
+            const cepLimpo = limparCEP(ceps);
+            return construirCEP(cepLimpo);
+        }
+
+        const completaCEPs = (ceps) => {
+            while(ceps.length > 0 && ceps.length < 8) {
+                 ceps += 0;
+            }
+            return formatarCEPs(ceps);
+        }
+
+        const  validar = (cep) => {
+            const varreCep = cep.match(/(?:\d{2}[-.\s]?)(?:\d{3}[-.\s]?)(?:\d{3})/g); // regEx para o CEP (?: indica que é apenas leitura do valor)
+            return (varreCep && varreCep[0] === cep); // verifica se varreCep não é null
+        }
+
+        const validarNaMudanca = (cepElemento) => {
+            completaCEPs(cepElemento.value);
+            if(validar(cepElemento.value )) {
+                cepElemento.value = formatarCEPs(cepElemento.value);
+                cepElemento.classList.remove('invalido');
+                cepElemento.classList.add('valido');
+            } else if(cepElemento.value === ''){
+                cepElemento.classList.remove('invalido');
+                cepElemento.classList.remove('valido');
+            } else {
+                cepElemento.value = completaCEPs(cepElemento.value);           
+                cepElemento.classList.remove('valido');
+                cepElemento.classList.add('invalido');
+            }
+        }
+
+        const adicionarAdicionaEvento = (cep) => {
+            cep.forEach((elemento) => {
+                addEventListener('change', () => {
+                    validarNaMudanca(elemento);
+                });
+            });
+        }
+
+        adicionarAdicionaEvento(ceps_list); // inicia
+
+        /* BUSCA CEPS NA API */
+        
+        const consultarRetorno = (event) => {
+            event.preventDefault();
+            limpaRetornos();
+            ceps_list.forEach(cep => {
+                if(cep) {
+                    buscaRetorno(cep.value);
+                }
+            });
+        }
+        
+        consultar_cep.addEventListener('click', consultarRetorno);
+        
+        const constroiRetorno = (ceps) => {
+            // cria novo objeto com o cep formatado
+            const cepFormatado = {
+                "cep":ceps.cep,
+                "logradouro":`${ceps.logradouro} - ${ceps.complemento}`,
+                "bairro":`${ceps.bairro}`,
+                "localidade":`${ceps.localidade} - ${ceps.uf}`
+            }
+            console.log(cepFormatado);
+
+            const div_resultado = `<ul class="resultado">
+                                    <li><span>CEP :</span> ${cepFormatado.cep}</li>
+                                    <li><span>Logradouro :</span> ${cepFormatado.logradouro}</li>
+                                    <li><span>Bairro :</span> ${cepFormatado.bairro}</li>
+                                    <li><span>Localidade :</span> ${cepFormatado.localidade}</li>
+                                </ul>`
+            if(!("erro" in ceps)) {
+                retornos.innerHTML += div_resultado;
+            }
+        }
+
+        // faz a requisicao HTTP do cep informado no input
+        const buscaRetorno = (cep) => {
+            let cepLimpo = limparCEP(cep);
+            fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`) // fe
+            .then((response) => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            })
+            .then(r => r.json())
+            .then(cep => {
+                constroiRetorno(cep);
+            }).catch(erroRetorno => {
+                erroRetorno;
+            });
+        }
+
+        const limpaRetornos = () => {
+            retornos.innerHTML = "";
+        }
+
+        /* INSERIR INPUTS ENTRADA */
+        
+        const atualizaListaCEPs = () => {
+            campos = document.querySelectorAll('.campo');
+            ceps_list = document.querySelectorAll('.cep');
+            remover = document.querySelectorAll('.remover');
+        }
+
+        const adicionarInput = (event) => {
+            event.preventDefault();
+            let campo = document.createElement('div');
+            campo.classList.add('campo');
+            campo.innerHTML = '<span>CEP</span>'+
+                            '<input type="text" class="cep" placeholder="00.000-000">'+
+                            '<button class="remover" id="remover">X</button>';
+            
+            const camposLista = document.querySelectorAll('.campo');
+
+            if(camposLista.length < 5) {
+                camposDiv.appendChild(campo);
+            }
+            atualizaListaCEPs(ceps_list);
+            adicionarAdicionaEvento(ceps_list);
+            removerAdicionaEvento(remover);
+            console.log(remover);
+            console.log(ceps_list);
+        }
+
+        adicionar.addEventListener('click', adicionarInput);
+
+        /* REMOVER INPUTS ENTRADA */
+        
+        const removerInput = (event) => {
+            event.preventDefault();
+            atualizaListaCEPs();
+            campos.item(campos.length - 1).remove();
+            console.log(campos);
+        }
+
+        const removerAdicionaEvento = (cep) => {
+            cep.forEach(item => {
+                item.addEventListener('click', removerInput);
+            });
+        }
+    </script>
+</body>
+</html>
