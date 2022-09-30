@@ -270,12 +270,7 @@
             return construirCEP(cepLimpo);
         }
 
-        const completaCEPs = (ceps) => {
-            while(ceps.length > 0 && ceps.length < 8) {
-                 ceps += 0;
-            }
-            return formatarCEPs(ceps);
-        }
+       
 
         const  validar = (cep) => {
             const varreCep = cep.match(/(?:\d{2}[-.\s]?)(?:\d{3}[-.\s]?)(?:\d{3})/g); // regEx para o CEP (?: indica que é apenas leitura do valor)
@@ -283,7 +278,6 @@
         }
 
         const validarNaMudanca = (cepElemento) => {
-            completaCEPs(cepElemento.value);
             if(validar(cepElemento.value )) {
                 cepElemento.value = formatarCEPs(cepElemento.value);
                 cepElemento.classList.remove('invalido');
@@ -291,8 +285,7 @@
             } else if(cepElemento.value === ''){
                 cepElemento.classList.remove('invalido');
                 cepElemento.classList.remove('valido');
-            } else {
-                cepElemento.value = completaCEPs(cepElemento.value);           
+            } else {        
                 cepElemento.classList.remove('valido');
                 cepElemento.classList.add('invalido');
             }
