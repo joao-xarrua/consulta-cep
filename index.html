@@ -40,6 +40,7 @@
             flex-wrap: wrap;
             align-items: center;
             z-index: -1;
+            
         }
 
         .main {
@@ -52,17 +53,10 @@
             border-radius: 20px;
             box-shadow: 10px 10px 2em rgba(0, 0, 0, .2);
             z-index: 1000;
-            animation: anime 5s;
+            transition: all 0.3s ease-in-out; 
+            transform: rotate3d(0,0,0,180deg); 
         }
 
-        @keyframes anime {
-            0% { 
-                opacity: 0;
-            }
-            100% { 
-                opacity: 1; 
-            }
-        }
 
         .entrada, .saida {
             padding: 20px;
@@ -381,40 +375,32 @@
 
         const adicionarInput = (event) => {
             event.preventDefault();
+            let camposLista = document.querySelectorAll('.campo');
             let campo = document.createElement('div');
             campo.classList.add('campo');
             campo.innerHTML = '<span>CEP</span>'+
                             '<input type="text" class="cep" placeholder="00.000-000">'+
-                            '<button class="remover" id="remover">X</button>';
+                            `<button name="${camposLista.length}" class="remover" id="remover" onClick="removerInput(${camposLista.length})">X</button>`;
             
-            const camposLista = document.querySelectorAll('.campo');
 
             if(camposLista.length < 5) {
                 camposDiv.appendChild(campo);
             }
             atualizaListaCEPs(ceps_list);
             adicionarAdicionaEvento(ceps_list);
-            removerAdicionaEvento(remover);
-            console.log(remover);
-            console.log(ceps_list);
         }
 
         adicionar.addEventListener('click', adicionarInput);
 
         /* REMOVER INPUTS ENTRADA */
         
-        const removerInput = (event) => {
-            event.preventDefault();
+        const removerInput = (idCep) => {
             atualizaListaCEPs();
-            campos.item(campos.length - 1).remove();
+            campos.item(idCep).remove();
             console.log(campos);
         }
 
-        const removerAdicionaEvento = (cep) => {
-            cep.forEach(item => {
-                item.addEventListener('click', removerInput);
-            });
-        }
+        
     </script>
 </body>
 </html>
