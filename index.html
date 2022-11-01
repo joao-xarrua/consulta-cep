@@ -366,15 +366,15 @@
 
         const adicionarInput = (event) => {
             event.preventDefault();
-            let camposLista = document.querySelectorAll('.campo');
+            let campos = document.querySelectorAll('.campo');
             let campo = document.createElement('div');
             campo.classList.add('campo');
             campo.innerHTML = '<span>CEP</span>'+
                             '<input type="text" class="cep" placeholder="00.000-000">'+
-                            `<button name="${camposLista.length}" class="remover" id="remover" onClick="removerInput(${camposLista.length})">X</button>`;
+                            `<button name="${campos.length}" class="remover" id="remover" onClick="removerInput(${campos.length})">X</button>`;
             
 
-            if(camposLista.length < 5) {
+            if(campos.length < 5) {
                 camposDiv.appendChild(campo);
             }
             atualizaListaCEPs(ceps_list);
@@ -387,6 +387,7 @@
         
         const removerInput = (idCep) => {
             atualizaListaCEPs();
+            
             campos.item(idCep).remove();
             console.log(campos);
         }
